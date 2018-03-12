@@ -16,14 +16,6 @@ define(function () {
             console.log(`Current view ID: ${viewId}`);
         }
 
-
-        /*
-         * Gets the document data we need
-         */ 
-        function getDocIds(data) {
-            console.log(data["items"]);
-        }
-
         /*
          * Gets the list of the currently filtered docs,
          * be it from a view or saved search
@@ -34,27 +26,15 @@ define(function () {
             overrideApi.setItemListDataSource(function (itemListDataSourceParams) {               
                 return {
 
-                    //getData: {
-                    //    method: function (payload){
-                    //        console.log(payload)
-                    //    }
-                    //},
-
                     // the inbound transformer gets information about the query results
                     inboundTransformer: {
                         method: function (data) {
                             console.log("Data:");
-                            console.log(data["items"]);
-                            return data;
-                        }
-                    },
-
-                    outboundTransformer: {
-                        method: function (data) {
-                            console.log(data)
+                            console.log(data);
                             return data;
                         }
                     }
+
                 };
             });
         }
