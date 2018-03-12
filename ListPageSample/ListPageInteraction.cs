@@ -16,18 +16,9 @@ namespace ListPageSample
                 Message = String.Empty
             };
 
-            string script = ScriptResource.script;
-
-            string block = $"<script type=\"text/javascript\"> {script} </script>";
-            RegisterStartupScriptBlock(new ScriptBlock()
-            {
-                Key = "script.js",
-                Script = block
-            });
-
             return response;
         }
 
-        //public override string[] ScriptFileNames => new[] { "script.js" };
+        public override string[] ScriptFileNames => new[] { "script.js" };
     }
 }
