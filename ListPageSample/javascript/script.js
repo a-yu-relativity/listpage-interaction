@@ -10,10 +10,61 @@
 
 define(function () {
     function sampleHandler(api) {
-        // just prints out the ID of the current view
+        /*
+         * Prints out the artifact ID of the current view
+         */ 
         function handleViewChange(viewData) {
             var viewId = viewData.viewId;
-            console.log(`Current view ID: ${viewId}`);
+            if (viewId !== null)
+                console.log(`Current view ID: ${viewId}`);
+        }
+
+        /*
+         * Formats the query result data into a proper Response object
+         * that the ListView can consume to render it properly on the front end.
+         * @param data : should look something like this:
+         *      CurrentStartIndex: 1
+         *      IDWindow: [1034555, 1231251, 2346666]
+         *      ObjectType: {DescriptorArtifactTypeID: 10, Guids: ...}
+         *      ResultCount: 3
+         *      Results: [{...}, {...}, {...}]
+         *      Success: true
+         *      TotalCount: 3
+         */ 
+        function formatResponse(data) {
+            if (!data["Success"]) {
+                return null;
+            }
+
+            // create the response object
+            var response = {};
+
+            // get the min/max indices and the total count
+            response["currentMinItemIndex"] = data["CurrentStartIndex"];
+            var currNumResults = data["ResultCount"];
+            response["currentMaxItemIndex"] = minItemIndex + currNumResults - 1;
+            response["grandTotalItems"] = data["TotalCount"];
+
+            // get the individual results
+            var resultArr = data["results"];
+
+            // and store them in the array
+            response["items"] = new Array(currNumResults);
+
+            // iterate through results and
+            // format the object instances (datarows)
+            for (var i = 0; i < currNumResults; i++) {
+                var artifact = resultArr[i];
+                if (artifact["Success"]) {
+                    var fieldData = {};
+                    fieldData["Artifact ID"] = artifact["ArtifactID"];
+
+
+                    response["items"].push(fieldData);
+                }
+            }
+
+            return response;
         }
 
         /*
@@ -31,7 +82,12 @@ define(function () {
                         method: function (data) {
                             console.log("Data:");
                             console.log(data);
-                            return data;
+
+                            var result = api
+                                .inboundTranslationService
+                                .itemListView
+                                .translateView(data);
+                            return result;
                         }
                     }
 
