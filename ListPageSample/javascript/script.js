@@ -36,33 +36,43 @@ define(function () {
                 return null;
             }
 
-            // create the response object
-            var response = {};
+            var workspaceId = 1035745;
+            var parentId = 1003663;
 
-            // get the min/max indices and the total count
-            response["currentMinItemIndex"] = data["CurrentStartIndex"];
-            var currNumResults = data["ResultCount"];
-            response["currentMaxItemIndex"] = minItemIndex + currNumResults - 1;
-            response["grandTotalItems"] = data["TotalCount"];
+            //// create the response object
+            //var response = {};
 
-            // get the individual results
-            var resultArr = data["results"];
+            //// get the min/max indices and the total count
+            //response["currentMinItemIndex"] = data["CurrentStartIndex"];
+            //var currNumResults = data["ResultCount"];
+            //response["currentMaxItemIndex"] = minItemIndex + currNumResults - 1;
+            //response["grandTotalItems"] = data["TotalCount"];
 
-            // and store them in the array
-            response["items"] = new Array(currNumResults);
+            //// get the individual results
+            //var resultArr = data["results"];
 
-            // iterate through results and
-            // format the object instances (datarows)
-            for (var i = 0; i < currNumResults; i++) {
-                var artifact = resultArr[i];
-                if (artifact["Success"]) {
-                    var fieldData = {};
-                    fieldData["Artifact ID"] = artifact["ArtifactID"];
+            //// and store them in the array
+            //response["items"] = new Array(currNumResults);
 
+            //// iterate through results and
+            //// format the object instances (datarows)
+            //for (var i = 0; i < currNumResults; i++) {
+            //    var artifact = resultArr[i];
+            //    if (artifact["Success"]) {
+                    
+            //        var fieldData = {};
+            //        fieldData["Artifact ID"] = artifact["ArtifactID"];
 
-                    response["items"].push(fieldData);
-                }
-            }
+            //        var obj = {}
+            //        obj["fieldData"] = fieldData;
+            //        response["items"].push(obj);
+            //    }
+            //}
+
+            var response = api
+                .inboundTranslationService
+                .objectManager
+                .translate(workspaceId, parentId, data, null, null, null, null);
 
             return response;
         }
@@ -82,11 +92,9 @@ define(function () {
                         method: function (data) {
                             console.log("Data:");
                             console.log(data);
-
-                            var result = api
-                                .inboundTranslationService
-                                .itemListView
-                                .translateView(data);
+                            // for only the array of Artifact IDs, use
+                            // data["IDWindow"]
+                            var result = formatResponse(data);
                             return result;
                         }
                     }
