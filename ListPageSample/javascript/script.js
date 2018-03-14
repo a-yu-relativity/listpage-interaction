@@ -52,7 +52,9 @@ define(function () {
                 return null;
             }
 
-            var workspaceId = parseInt(getQueryVariable("AppID"));
+            var workspaceId = api.startupInfo.workspaceId;
+
+            // can maybe hardcode to 1003663, but...
             var artifactId = parseInt(getQueryVariable("ArtifactID"));
 
             //// create the response object
