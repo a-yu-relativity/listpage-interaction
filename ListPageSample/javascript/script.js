@@ -19,6 +19,22 @@ define(function () {
                 console.log(`Current view ID: ${viewId}`);
         }
 
+
+        /*
+         * Gets the variable of a query string from URL
+         */
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (decodeURIComponent(pair[0]) == variable) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+            console.log('Query variable %s not found', variable);
+        }
+
         /*
          * Formats the query result data into a proper Response object
          * that the ListView can consume to render it properly on the front end.
@@ -36,8 +52,8 @@ define(function () {
                 return null;
             }
 
-            var workspaceId = 1035745;
-            var parentId = 1003663;
+            var workspaceId = parseInt(getQueryVariable("AppID"));
+            var artifactId = parseInt(getQueryVariable("ArtifactID"));
 
             //// create the response object
             //var response = {};
@@ -72,7 +88,7 @@ define(function () {
             var response = api
                 .inboundTranslationService
                 .objectManager
-                .translate(workspaceId, parentId, data, null, null, null, null);
+                .translate(workspaceId, artifactId, data, null, null, null, null);
 
             return response;
         }
