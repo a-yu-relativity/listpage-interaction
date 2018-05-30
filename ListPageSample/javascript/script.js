@@ -1,51 +1,194 @@
-﻿/*
- * event names before v. 2.0.17.48 -> after
- * onPageChangeEvent(pageNavigationAPI) -> listPageChange(pageNavigationAPI)
- * onNewItemButtonCustomizeEvent(buttonAPI) -> newItemButtonInit(buttonAPI)
- * onCellFormattingEvent(cellFormattingAPI) -> cellFormattersInit(cellFormatterApi)
- * onDataSourceOverrideEvent(dataSourceAPI) -> dataSourceInit(dataSourceAPI)
- * onViewChangeEvent(viewChangeAPI) -> viewChange(viewChangeAPI)
- * onWidgetMenuCustomizeEvent(widgetMenuAPI) -> widgetMenuCreate(widgetMenuAPI)
-*/
-
-define(function () {
+﻿define(function () {
     function sampleHandler(api) {
-        /*
-         * Prints out the artifact ID of the current view (optional)
-         */ 
-        function handleViewChange(viewData) {
-            var viewId = viewData.viewId;
-            if (viewId !== null)
-                console.log(`Current view ID: ${viewId}`);
+        // console.log("Loaded jquery version: ");
+        // console.log($().jquery);
+        var config = requirejs.s.contexts._.config;
+        // config["paths"]["jquery"] = "//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min";
+        config["paths"]["bootstrap"] = "//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min";
+        config["shim"]["bootstrap"] = ["jquery"];
+        console.log(config);
+
+        require(["jquery", "bootstrap"], function($) {
+            console.log($().jquery);
+            var bootstrap_ver = $.fn.tooltip.Constructor.VERSION;
+            console.log(bootstrap_ver);
+            return {};
+        });
+        // our new field
+        const FIELD_NAME = "My custom field";
+
+        function formatCells(formatterApi) {
+            formatterApi.fields.push({
+                align: "center",
+                columnName: FIELD_NAME,
+                displayName: FIELD_NAME,
+                fieldType: "fixedlengthtext",
+                filterType: "relativity.fluidItemList.filters.fluid.PlaceHolder",
+                filterWidgetMetaData: {
+                    disableAdvancedMode: undefined,
+                    field: undefined,
+                    multiple: true,
+                    operations: [
+                        {
+                            isDefault: true,
+                            value: "parse to tokens"
+                        }],
+                    settings: {
+                        multiple: {
+                            buttonText: "Add condition",
+                            enabled: false
+                        }
+                    }
+                },
+                filterable: true,
+                formatOptions: {
+                    dataLocation: FIELD_NAME,
+                    isHtmlEnabled: false,
+                    isLinked: false,
+                    maxLength: 255,
+                    urlLocation: "viewUrl"
+                },
+                hidden: undefined,
+                initialWidth: 150,
+                resizable: undefined,
+                sortable: false,
+                width: 150,
+                wrapping: true
+            });
+
+            console.log(formatterApi.fields);
         }
 
 
-        /*
-         * Gets the list of the currently filtered docs,
-         * be it from a view or saved search
-         */ 
-        function getFilteredDocs(overrideApi) {
-            console.log('Accessing currently filtered docs.');
+        function addColumn(overrideApi) {
             // set a custom data source factory function for item list
-            overrideApi.setItemListDataSource(function (itemListDataSourceParams) {               
+            overrideApi.setItemListDataSource(function (itemListDataSourceParams) {
                 return {
+                    //getData: {
+                    //    method: function (queryPayload) {
+
+                    //        // return a promise that contains the data from the query
+                    //        var result = api.promise.defer();
+
+                    //        //// create object manager prototype
+                    //        //var ObjectManager = function(baseUrl) {
+                    //        //    api.keplerProviderService.KeplerProxy.call(this, baseUrl);
+                    //        //    var proxy = this;
+                    //        //    this.queryObjects = function(payload, workspaceId) {
+                    //        //        return api.keplerProviderService.callLRP(
+                    //        //            proxy,
+                    //        //            `/Relativity.Rest/API/Relativity.Objects/workspaces/${workspaceId}/objects`,
+                    //        //            "query",
+                    //        //            payload,
+                    //        //            null,
+                    //        //            null,
+                    //        //            keplerVersion = 2
+                    //        //        );
+                    //        //    }
+                    //        //}
+
+                    //        //// initialize object manager service
+                    //        //var objMgr = new ObjectManager("");
+
+                    //        //// perform the query and get the results
+                    //        //var data = objMgr.queryObjects(queryPayload, itemListDataSourceParams.workspaceId);
+                    //        var workspaceId = itemListDataSourceParams.workspaceId;
+                    //        console.info(queryPayload);
+                    //        var requestUrl = `/Relativity.Rest/API/Relativity.Objects/workspaces/${workspaceId}/objects/query/`;
+
+                    //        // get the payload
+                    //        var payload = queryPayload["payload"];
+
+                    //        $.ajax({
+                    //            url: requestUrl,
+                    //            type: 'POST',
+                    //            data: JSON.stringify(payload),
+                    //            beforeSend: function (request) {
+                    //                request.setRequestHeader("X-CSRF-Header", window.top.GetCsrfTokenFromPage());
+                    //                request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                    //            },
+                    //            async: false,
+                    //            success: function (response) {                                  
+                    //                // get results
+                    //                var results = response["Results"];
+                                    
+                    //                // modify the data
+                    //                const FIELD_NAME = "My custom field";
+                    //                results.forEach(function (result) {
+                    //                    var fieldValPairs = result["Artifact"]["FieldValuePairs"];
+                    //                    fieldValPairs.push({
+                    //                        "Field": {
+                    //                            "FieldType": "FixedLengthText",
+                    //                            "ArtifactID": 0,
+                    //                            "ViewFieldID": 0,
+                    //                            "Guids": [],
+                    //                            "Name": FIELD_NAME                                              
+                    //                        },
+                    //                        "Value": "FOO"
+                    //                    });
+                    //                });
+                    //                result.resolve(response);
+
+                    //                console.info(response);
+                    //            }
+                    //        });
+
+                    //        return result.promise;
+                    //    }
+                    //},
 
                     inboundTransformer: {
                         method: function (data) {
-                            console.log(data);
-                            // to get the list of artifact ids:
-                            var artifactIds = data["IDWindow"];
-                            return api.inboundTranslationService.objectManager.translate(
+                            //console.info("inbound:");
+                            //console.info(data);
+
+                            
+                            //-----
+
+                            var results = data["Results"];
+
+                            // modify the data
+                            results.forEach(function (result) {
+                                var fieldValPairs = result["Artifact"]["FieldValuePairs"];
+                                fieldValPairs.push({
+                                    "Field": {
+                                        "FieldType": "FixedLengthText",
+                                        "ArtifactID": 0,
+                                        "ViewFieldID": 0,
+                                        "Guids": [],
+                                        "Name": FIELD_NAME
+                                    },
+                                    "Value": "FOO"
+                                });
+                            });
+
+                            // callback functions
+                            var callbacks = itemListDataSourceParams.callbacks;
+                            var dataMappingCallback = callbacks.dataMappingCallback;
+                            var docReviewPrimingCallback = callbacks.docReviewPrimingCallback;
+                            var refreshFILCallback = callbacks.refreshFILCallback;
+                            var getGroupDefinitionFieldName = callbacks.getGroupDefinitionFieldName;
+
+                            var result = api.inboundTranslationService.objectManager.translate(
                                 itemListDataSourceParams.workspaceId,
                                 itemListDataSourceParams.folderId,
                                 data,
-                                itemListDataSourceParams.callbacks.dataMappingCallback,
-                                itemListDataSourceParams.callbacks.docReviewPrimingCallback,
-                                itemListDataSourceParams.callbacks.refreshFILCallback,
-                                itemListDataSourceParams.callbacks.getGroupDefinitionFieldName);
+                                dataMappingCallback,
+                                docReviewPrimingCallback,
+                                refreshFILCallback,
+                                getGroupDefinitionFieldName);
+
+                            console.info(result);
+                            return result;
                         }
-                    }
-                    
+                    },
+
+                    //outboundTransformer: {
+                    //    method: function (data) {
+                    //        console.info(data);
+                    //        return data;
+                    //    }
+                    //}
                 };
             });
         }
@@ -54,11 +197,11 @@ define(function () {
         return {
             // handle the dataSourceInit event, which occurs
             // once upon page load
-            dataSourceInit: getFilteredDocs,
-            // handle the view change event, which occurs
-            // every time the user changes the view
-            viewChange: handleViewChange
+            dataSourceInit: addColumn,
+
+            cellFormattersInit: formatCells
         };
     }
     return sampleHandler;
 });
+

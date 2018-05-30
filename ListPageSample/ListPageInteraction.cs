@@ -19,6 +19,8 @@ namespace ListPageSample
             return response;
         }
 
-        public override string[] ScriptFileNames => new[] { "script.js" };
+        public override string[] ScriptFileNames => new[] { "script.js" /*, "foo.js"*/};
+
+        //public override string[] AdditionalHostedFileNames => new[] { "foo.js" };
     }
 }
