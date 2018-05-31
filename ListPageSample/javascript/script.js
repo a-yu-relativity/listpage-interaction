@@ -1,19 +1,23 @@
-﻿define(function () {
-    function sampleHandler(api) {
-        // console.log("Loaded jquery version: ");
-        // console.log($().jquery);
-        var config = requirejs.s.contexts._.config;
-        // config["paths"]["jquery"] = "//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min";
-        config["paths"]["bootstrap"] = "//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min";
-        config["shim"]["bootstrap"] = ["jquery"];
-        console.log(config);
+﻿requirejs.config({
+    baseUrl: "js",
+    paths: {
+        "bootstrap": ["//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min"]
+    },
+    shim: {
+        "bootstrap": {
+            deps: ["jquery"],
+            exports: "$"
+        }
+    }
+});
 
-        require(["jquery", "bootstrap"], function($) {
-            console.log($().jquery);
-            var bootstrap_ver = $.fn.tooltip.Constructor.VERSION;
-            console.log(bootstrap_ver);
-            return {};
-        });
+define(["bootstrap"], function ($) {
+    var bootstrap_enabled = (typeof $().modal == 'function');
+    if ($.fn !== 'undefined') {
+        console.log("Loaded bootstrap");
+    }
+
+    function sampleHandler(api) {
         // our new field
         const FIELD_NAME = "My custom field";
 
@@ -48,7 +52,7 @@
                     maxLength: 255,
                     urlLocation: "viewUrl"
                 },
-                hidden: undefined,
+                hidden: false,
                 initialWidth: 150,
                 resizable: undefined,
                 sortable: false,
@@ -57,6 +61,10 @@
             });
 
             console.log(formatterApi.fields);
+
+            formatterApi.setFormatter(FIELD_NAME, function (defaultValue, columnOptions, rowData, api) {
+                return api.getCellData(defaultValue);
+                });
         }
 
 
