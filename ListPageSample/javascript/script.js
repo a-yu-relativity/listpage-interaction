@@ -1,6 +1,8 @@
-﻿requirejs.config({
+﻿// First, specify the bootstrap CDN in the RequireJS config
+requirejs.config({
     baseUrl: "js",
     paths: {
+        // "jquery": ["//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min"],
         "bootstrap": ["//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min"]
     },
     shim: {
@@ -11,10 +13,13 @@
     }
 });
 
-define(["bootstrap"], function ($) {
-    var bootstrap_enabled = (typeof $().modal == 'function');
-    if ($.fn !== 'undefined') {
+// Then, specify both jQuery and bootstrap as dependencies
+define(["jquery", "bootstrap"], function ($) {
+
+    if (typeof($.fn) !== 'undefined') {
         console.log("Loaded bootstrap");
+        var bootstrap_ver = $.fn.tooltip.Constructor.VERSION;
+        console.log(bootstrap_ver);  // => 4.1.1
     }
 
     function sampleHandler(api) {
