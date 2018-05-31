@@ -1,5 +1,27 @@
+﻿// First, specify the bootstrap CDN in the RequireJS config
+requirejs.config({
+    baseUrl: "js",
+    paths: {
+        // "jquery": ["//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min"],
+        "bootstrap": ["//stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min"]
+    },
+    shim: {
+        "bootstrap": {
+            deps: ["jquery"],
+            exports: "$"
+        }
+    }
+});
+
 // Then, specify both jQuery and bootstrap as dependencies
-define(function () {  
+define(["jquery", "bootstrap"], function ($) {
+
+    if (typeof($.fn) !== 'undefined') {
+        console.log("Loaded bootstrap");
+        var bootstrap_ver = $.fn.tooltip.Constructor.VERSION;
+        console.log(bootstrap_ver);  // => 4.1.1
+    }
+
     function sampleHandler(api) {
         // our new field
         const FIELD_NAME = "My custom field";
