@@ -1,22 +1,31 @@
 define(function() {
-    function sampleHandler(api) {
-      function showMyModal() {
-        var id = api.modalService.createModal({
-          title: "My awesome modal",
-          template: "<span>Some text</span>",
-          buttons: [{name: "OK", eventName: "awesome_modal_ok_click"}],
-          init: function(scope) {
-            scope.$on("awesome_modal_ok_click", function() {
-              // Close modal on the OK button click.
-              api.modalService.hideModal(id);
-            });
-          }
-        });
-            //  api.modalService.showModal(id);
-      }
-      // Show this modal in 2 seconds.
-      setTimeout(showMyModal, 2000);
-      return {};
+  function modalHandler(api) {
+    function createButton(buttonApi) {
+      buttonApi.setButton({
+        text: "Say hello",
+        eventName: "say_hello"  // name of event when btn clicked
+      });
     }
-    return sampleHandler;
-  });
+
+    function showMyModal() {
+      var id = api.modalService.createModal({
+        title: "My first list page interaction event handler",
+        template: "<span>Hello, world.</span>",
+        buttons: [{name: "OK", eventName: "hw_modal_ok"}],
+        init: function(scope) {
+        scope.$on("hw_modal_ok", function() {
+          // Close modal on the OK button click.
+          api.modalService.hideModal(id);
+        });
+        }
+      });
+      api.modalService.showModal(id);
+    }
+    // Show this modal upon button click
+    api.eventService.subscribe("say_hello", showMyModal);
+    return {
+      newItemButtonInit: createButton
+    };
+  }
+  return modalHandler;
+});
